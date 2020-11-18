@@ -12,7 +12,7 @@
 <body class="bg-info">
   
   <div class="container">
-    <h1 class="h1 text-center text-white">Movies</h1>
+    <h1 class="h1 text-center text-white">Movies list</h1>
     
     <form class="js-search-form d-flex" action="https://echo.htmlacademy.ru" method="POST">
       
@@ -33,7 +33,7 @@
   <template id="movie">
     <li  class="movie list-group-item flex-shrink-0 d-flex flex-column overflow-hidden item-width my-2">
       <div class="d-flex align-items-center">
-        <span class="h5 mb-0 mr-2 flex-shrink-0">Kino nomi : </span>
+        <span class="h5 mb-0 mr-2 flex-shrink-0">Movie title : </span>
         <p class="movie-title h5 text-dark mb-0 text-truncate" title=""></p>
       </div>
       <div class="d-flex align-items-center">
@@ -43,8 +43,8 @@
         <p class="movie-id mb-0"></p>
       </div>
       <div class="d-flex align-items-center">
-        <span class="mr-1">Sanasi : </span>
-        <p class="movie-year small text-dark mb-0">2010</p>
+        <span class="mr-1">Year : </span>
+        <p class="movie-year small text-dark mb-0"></p>
       </div>
       <div class="d-flex">
         <span class="flex-shrink-0 mr-2">Genre : </span>
@@ -76,14 +76,14 @@
         <span class="material-icons text-secondary">
           schedule
         </span>
-        <p class="mx-1 mb-0">Kino uzunligi : </p>
+        <p class="mx-1 mb-0">Movie duration : </p>
         <p  class="movie-runtime mb-0"></p>
       </div>
       <div class="d-flex align-items-center my-1">
         <span class="material-icons text-secondary">
           language
         </span>
-        <p class="mx-1 mb-0">Kino tili : </p>
+        <p class="mx-1 mb-0">Movie language : </p>
         <p  class="movie-language mb-0"></p>
       </div>
     </li>
