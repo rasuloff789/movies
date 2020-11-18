@@ -13,8 +13,19 @@
   
   <div class="container">
     <h1 class="h1 text-center text-white">Movies</h1>
+    
+    <form class="js-search-form d-flex" action="https://echo.htmlacademy.ru" method="POST">
+      
+      <input class="js-search-input form-control" placeholder="Search..." autocomplete="off" spellcheck="false" type="search">
+      
+      <button class="ml-2 btn btn-success">Search</button>
+    </form>
+    
     <ul class="list-unstyled  d-flex justify-content-around flex-wrap js-movies-list"> 
     </ul>
+    
+    <button class="btn btn-success js-btn-add-movies d-block">Show more</button>
+    <button class="btn btn-success js-btn-reload-movies d-none">Reload movies</button>
   </div>
   
   

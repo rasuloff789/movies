@@ -36,6 +36,8 @@ var normalizeMovies = movies.map(function(movie , i){
   };
 });
 
+var twoHundredVideos = normalizeMovies.slice(0 , 200);
+
 var renderMovies = function (movies) {
   
   moviesList.innerHTML = '';
@@ -48,5 +50,79 @@ var renderMovies = function (movies) {
   
   moviesList.appendChild(elMovieWrapperFragment);
 };
+renderMovies(twoHundredVideos);
 
-renderMovies(normalizeMovies);
+var btnAddMovies  = $_(".js-btn-add-movies");
+
+btnAddMovies.addEventListener("click" , function(){
+  renderMovies(normalizeMovies);
+  searchInput.value = "";
+  btnAddMovies.classList.add("d-none");
+  btnAddMovies.classList.remove("d-block");
+});
+
+var btnReloadMovies = $_(".js-btn-reload-movies");
+
+btnReloadMovies.addEventListener("click" , function(){
+  renderMovies(twoHundredVideos);
+  searchInput.value = "";
+  btnReloadMovies.classList.add("d-none");
+  btnReloadMovies.classList.remove("d-block");
+  btnAddMovies.classList.add("d-block");
+  btnAddMovies.classList.remove("d-none");
+});
+
+var searchForm =  $_(".js-search-form");
+var searchInput =  $_(".js-search-input" , searchForm);
+
+searchForm.addEventListener('submit' , function(evt){
+  evt.preventDefault();
+  
+  if(searchInput.value.trim() === ""){
+    searchInput.value = "";
+    searchInput.focus();
+    alert('Birodar biror so`z yozing');
+    return;
+  }
+  
+  var searchInputValue = searchInput.value.trim().split(" ");
+  var removeNull = function (array) {
+    if (array.includes("")){
+      array.splice(array.indexOf("") , 1);
+      removeNull(array);
+    }else{
+      return;
+    };
+  };
+  removeNull(searchInputValue);
+  
+  searchInputValue = searchInputValue.join("|").toString();
+  
+  var searchResult = [];
+  var searchQuery = new RegExp(searchInputValue , "gi");
+  
+  normalizeMovies.forEach(function(movie){
+    if(movie.title.toString().match(searchQuery)){
+      searchResult.push(movie);
+    };
+  });
+  
+  if(searchResult.length === 0){
+    alert('Hurmatli foydalanuvchi , afsuski bizda bunday kino yo`q ekan :(( ');
+    renderMovies(twoHundredVideos);
+    searchInput.value = "";
+    searchInput.focus();
+    btnAddMovies.classList.add("d-block");
+    btnAddMovies.classList.remove("d-none");
+  }else{
+    renderMovies(searchResult);
+    
+    btnAddMovies.classList.add("d-none");
+    btnAddMovies.classList.remove("d-block");
+    btnReloadMovies.classList.remove("d-none");
+    btnReloadMovies.classList.add("d-block");
+  }
+  
+  
+  
+});
