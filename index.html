@@ -14,18 +14,28 @@
   <div class="container">
     <h1 class="h1 text-center text-white">Movies list</h1>
     
-    <form class="js-search-form d-flex" action="https://echo.htmlacademy.ru" method="POST">
+    <form class="js-search-form d-flex align-items-center" action="https://echo.htmlacademy.ru" method="POST">
       
-      <input class="js-search-input form-control" placeholder="Search..." autocomplete="off" spellcheck="false" type="search">
+      <div class="d-flex flex-grow-1 align-items-center">
+        <input class="js-search-input form-control mx-4" aria-label="Search..." required name="search-text" placeholder="Search..." autocomplete="off" spellcheck="false" type="search">
+        
+        <select class="js-categorie-select form-control mx-4 d-inline" aria-label="Categories" name="categorie"></select>
+        
+        <div class="d-flex flex-shrink-0 align-items-center">
+          <span class="flex-shrink-0 text-white">Minimum rating</span>
+          
+          <input class="js-rating-input form-control mx-4" aria-label="Minimum rating" required name="minimum rating" placeholder="7" autocomplete="off" spellcheck="false" type="number">
+        </div>
+      </div>
       
-      <button class="ml-2 btn btn-success">Search</button>
+      <button type="submit" class="ml-2 btn btn-success">Search</button>
     </form>
     
     <ul class="list-unstyled  d-flex justify-content-around flex-wrap js-movies-list"> 
     </ul>
     
-    <button class="btn btn-success js-btn-add-movies d-block">Show more</button>
-    <button class="btn btn-success js-btn-reload-movies d-none">Reload movies</button>
+    <button type="button" class="btn btn-success js-btn-show-movies d-block">Show more</button>
+    <button type="button" class="btn btn-success js-btn-reload-movies d-none">Reload movies</button>
   </div>
   
   
@@ -73,17 +83,15 @@
         <p  class="movie-description mb-0 text-dark my-1"></p>
       </div>
       <div class="d-flex align-items-center my-1">
-        <span class="material-icons text-secondary">
+        <span class="material-icons mx-1 text-secondary">
           schedule
         </span>
-        <p class="mx-1 mb-0">Movie duration : </p>
         <p  class="movie-runtime mb-0"></p>
       </div>
       <div class="d-flex align-items-center my-1">
-        <span class="material-icons text-secondary">
+        <span class="material-icons mx-1 text-secondary">
           language
         </span>
-        <p class="mx-1 mb-0">Movie language : </p>
         <p  class="movie-language mb-0"></p>
       </div>
     </li>
