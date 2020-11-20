@@ -69,40 +69,45 @@ var searchForm =  $_(".js-search-form");
 var elSearchInput =  $_(".js-search-input" , searchForm);
 var elMinimumRating = $_(".js-rating-input" , searchForm);
 
-categoriesArray = [];
+categoriesArray = ["All"];
 var elSelectCategorie = $_(".js-categorie-select" , searchForm);
 normalizeMovies.forEach(function(movie){
   movie.categories.forEach(function(categorie){
     if(!(categoriesArray.includes(categorie))){
       categoriesArray.push(categorie);
-      var elNewOption = createElement("option" , "" , categorie);
-      elNewOption.value = categorie ;
-      elSelectCategorie.appendChild(elNewOption);
     };
   });
 });
 
+categoriesArray.forEach(function(categorie){
+  var elNewOption = createElement("option" , "" , categorie);
+  elNewOption.value = categorie ;
+  elSelectCategorie.appendChild(elNewOption);
+})
+
 searchForm.addEventListener('submit' , function(evt){
   evt.preventDefault();
+  var minimumRatingValue= parseFloat(elMinimumRating.value.trim() , 10);
+  var categoriesValue = elSelectCategorie.value;
   
-  if(elSearchInput.value.trim() === "" || elMinimumRating.value.trim() === ""){
-    if(elSearchInput.value.trim() === ""){
-      elSearchInput.value = "";
-      elSearchInput.focus();
-    }else{
-      elMinimumRating.value = "";
-      elMinimumRating.focus();
-    }
+  if(elSearchInput.value.trim() === ""){
+    elSearchInput.value = "";
+    elSearchInput.focus();
     alert('Birodar biror nima yozing');
     return;
-  }
+  };
   
   if(isNaN(elMinimumRating.value)){
     elMinimumRating.value = "";
     elMinimumRating.focus();
     alert('Birodar son yozing');
     return;
-  }
+  }else if(minimumRatingValue < 0){
+    elMinimumRating.value = "";
+    elMinimumRating.focus();
+    alert('Musbat son yozing');
+    return;
+  };
   
   var searchInputValue = elSearchInput.value.trim().split(" ");
   var removeNull = function (array) {
@@ -119,13 +124,12 @@ searchForm.addEventListener('submit' , function(evt){
   searchInputValue = searchInputValue.join("|").toString();
   var searchQuery = new RegExp(searchInputValue , "gi");
   
-  var categoriesValue = elSelectCategorie.value;
-  var minimumRatingValue= parseFloat(elMinimumRating.value.trim() , 10);
+  
   
   var searchResult = normalizeMovies.filter(function(movie){
     var checkTitle = movie.title.toString().match(searchQuery);
-    var checkCategorie = movie.categories.includes(categoriesValue);
-    var checkIMdBrating = movie.imdbRating >= minimumRatingValue ;
+    var checkCategorie = categoriesValue === "All" || movie.categories.includes(categoriesValue);
+    var checkIMdBrating = movie.imdbRating >= (minimumRatingValue || 0) ;
     return (checkTitle && checkCategorie && checkIMdBrating);
   });
   
