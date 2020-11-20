@@ -132,8 +132,8 @@ searchForm.addEventListener('submit' , function(evt){
   if(searchResult.length === 0){
     alert('Hurmatli foydalanuvchi , afsuski bizda bunday kino yo`q ekan :(( ');
     renderMovies(twoHundredMovies);
-    searchInput.value = "";
-    searchInput.focus();
+    elSearchInput.value = "";
+    elSearchInput.focus();
     btnShowMovies.classList.add("d-block");
     btnShowMovies.classList.remove("d-none");
   }else{
