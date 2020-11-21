@@ -1,6 +1,8 @@
 var moviesList = $_(".js-movies-list") ; 
 var movieTemplate = $_("#movie").content;
 
+var searchResult = [];
+
 var createMovieElement = function(movie){
   var elNewMovie = movieTemplate.cloneNode(true);
   $_(".movie-id" , elNewMovie).textContent = movie.id;
@@ -35,6 +37,8 @@ var normalizeMovies = movies.map(function(movie , i){
 
 var twoHundredMovies = normalizeMovies.slice(0 , 200);
 
+var arrayForSort = twoHundredMovies.slice();
+
 var renderMovies = function (movies) {
   
   moviesList.innerHTML = '';
@@ -52,6 +56,7 @@ renderMovies(twoHundredMovies);
 var btnShowMovies  = $_(".js-btn-show-movies");
 btnShowMovies.addEventListener("click" , function(){
   renderMovies(normalizeMovies);
+  arrayForSort = normalizeMovies.slice();
   btnShowMovies.classList.add("d-none");
   btnShowMovies.classList.remove("d-block");
 });
@@ -59,6 +64,7 @@ btnShowMovies.addEventListener("click" , function(){
 var btnReloadMovies = $_(".js-btn-reload-movies");
 btnReloadMovies.addEventListener("click" , function(){
   renderMovies(twoHundredMovies);
+  arrayForSort = twoHundredMovies.slice();
   btnReloadMovies.classList.add("d-none");
   btnReloadMovies.classList.remove("d-block");
   btnShowMovies.classList.add("d-block");
@@ -126,7 +132,7 @@ searchForm.addEventListener('submit' , function(evt){
   
   
   
-  var searchResult = normalizeMovies.filter(function(movie){
+  searchResult = normalizeMovies.filter(function(movie){
     var checkTitle = movie.title.toString().match(searchQuery);
     var checkCategorie = categoriesValue === "All" || movie.categories.includes(categoriesValue);
     var checkIMdBrating = movie.imdbRating >= (minimumRatingValue || 0) ;
@@ -136,15 +142,123 @@ searchForm.addEventListener('submit' , function(evt){
   if(searchResult.length === 0){
     alert('Hurmatli foydalanuvchi , afsuski bizda bunday kino yo`q ekan :(( ');
     renderMovies(twoHundredMovies);
+    arrayForSort = twoHundredMovies.slice();
     elSearchInput.value = "";
     elSearchInput.focus();
     btnShowMovies.classList.add("d-block");
     btnShowMovies.classList.remove("d-none");
   }else{
     renderMovies(searchResult);
+    arrayForSort = searchResult.slice();
     btnShowMovies.classList.add("d-none");
     btnShowMovies.classList.remove("d-block");
     btnReloadMovies.classList.remove("d-none");
     btnReloadMovies.classList.add("d-block");
+  };
+});
+
+var sortArray = [
+  {
+    name:"none",
+    sort:"all"
+  },
+  {
+    name:"IMdB ID lower",
+    sort:"IMdBIDl"
+  },
+  {
+    name:"IMdB ID higher",
+    sort:"IMdBIDh"
+  },
+  {
+    name:"IMdB rating higher",
+    sort:"IMdBRH"
+  },
+  {
+    name:"IMdB rating lower",
+    sort:"IMdBRL"
+  },
+  {
+    name:"Time Up",
+    sort:"timeup"
+  },
+  {
+    name:"Time Down",
+    sort:"timedown"
+  },
+  {
+    name:"Year Down",
+    sort:"yeardown"
+  },
+  {
+    name:"Year up",
+    sort:"yearup"
   }
+]; 
+var elMoviesSortForm = $_(".js-sort-form");
+var elMoviesSortSelect = $_(".js-sort-movies");
+sortArray.forEach(function(sort){
+  var elNewSortOption = createElement("option");
+  elNewSortOption.value = sort.sort;
+  elNewSortOption.textContent = sort.name;
+  elMoviesSortSelect.appendChild(elNewSortOption);
+});
+
+elMoviesSortForm.addEventListener('change', function(evt){
+  evt.preventDefault();
+  if(elMoviesSortSelect.value === "yeardown"){
+    arrayForSort.sort(function(b , a){
+      return a.year - b.year ;
+    });
+    renderMovies(arrayForSort);
+  };
+  if(elMoviesSortSelect.value === "yearup"){
+    arrayForSort.sort(function(a , b){
+      return a.year - b.year ;
+    });
+    renderMovies(arrayForSort);
+  };
+  if(elMoviesSortSelect.value === "timeup"){
+    arrayForSort.sort(function(a , b){
+      return a.runtime - b.runtime ;
+    });
+    renderMovies(arrayForSort);
+  };
+  if(elMoviesSortSelect.value === "timedown"){
+    arrayForSort.sort(function(b , a){
+      return a.runtime - b.runtime ;
+    });
+    renderMovies(arrayForSort);
+  };
+  if(elMoviesSortSelect.value === "IMdBRH"){
+    arrayForSort.sort(function(a , b){
+      return a.imdbRating - b.imdbRating ;
+    });
+    renderMovies(arrayForSort);
+  };
+  if(elMoviesSortSelect.value === "IMdBRL"){
+    arrayForSort.sort(function(b , a){
+      return a.imdbRating - b.imdbRating ;
+    });
+    renderMovies(arrayForSort);
+  };
+  if(elMoviesSortSelect.value === "IMdBIDl"){
+    arrayForSort.sort(function(a , b){
+      return ('' + a.imdbId).localeCompare(b.imdbId);
+    });
+    renderMovies(arrayForSort);
+  };
+  if(elMoviesSortSelect.value === "IMdBIDh"){
+    arrayForSort.sort(function(b , a){
+      return ('' + a.imdbId).localeCompare(b.imdbId);
+    });
+    renderMovies(arrayForSort);
+  };
+  
+  if(elMoviesSortSelect.value === "all"){
+    arrayForSort.sort(function(a , b){
+      return a.id - b.id;
+    });
+    renderMovies(arrayForSort);
+  };
 });
