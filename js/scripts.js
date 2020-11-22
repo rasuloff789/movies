@@ -210,55 +210,46 @@ elMoviesSortForm.addEventListener('change', function(evt){
     arrayForSort.sort(function(b , a){
       return a.year - b.year ;
     });
-    renderMovies(arrayForSort);
-  };
-  if(elMoviesSortSelect.value === "yearup"){
+  }
+  else if(elMoviesSortSelect.value === "yearup"){
     arrayForSort.sort(function(a , b){
       return a.year - b.year ;
     });
-    renderMovies(arrayForSort);
-  };
-  if(elMoviesSortSelect.value === "timeup"){
+  }
+  else if(elMoviesSortSelect.value === "timeup"){
     arrayForSort.sort(function(a , b){
       return a.runtime - b.runtime ;
     });
-    renderMovies(arrayForSort);
-  };
-  if(elMoviesSortSelect.value === "timedown"){
+  }
+  else if(elMoviesSortSelect.value === "timedown"){
     arrayForSort.sort(function(b , a){
       return a.runtime - b.runtime ;
     });
-    renderMovies(arrayForSort);
-  };
-  if(elMoviesSortSelect.value === "IMdBRH"){
+  }
+  else if(elMoviesSortSelect.value === "IMdBRH"){
     arrayForSort.sort(function(a , b){
       return a.imdbRating - b.imdbRating ;
     });
-    renderMovies(arrayForSort);
-  };
-  if(elMoviesSortSelect.value === "IMdBRL"){
+  }
+  else if(elMoviesSortSelect.value === "IMdBRL"){
     arrayForSort.sort(function(b , a){
       return a.imdbRating - b.imdbRating ;
     });
-    renderMovies(arrayForSort);
-  };
-  if(elMoviesSortSelect.value === "IMdBIDl"){
+  }
+  else if(elMoviesSortSelect.value === "IMdBIDl"){
     arrayForSort.sort(function(a , b){
       return ('' + a.imdbId).localeCompare(b.imdbId);
     });
-    renderMovies(arrayForSort);
-  };
-  if(elMoviesSortSelect.value === "IMdBIDh"){
+  }
+  else if(elMoviesSortSelect.value === "IMdBIDh"){
     arrayForSort.sort(function(b , a){
       return ('' + a.imdbId).localeCompare(b.imdbId);
     });
-    renderMovies(arrayForSort);
-  };
-  
-  if(elMoviesSortSelect.value === "all"){
+  }
+  else if(elMoviesSortSelect.value === "all"){
     arrayForSort.sort(function(a , b){
       return a.id - b.id;
     });
-    renderMovies(arrayForSort);
-  };
+  }
+  renderMovies(arrayForSort);
 });
