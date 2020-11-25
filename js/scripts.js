@@ -5,16 +5,14 @@ var searchResult = [];
 
 var createMovieElement = function(movie){
   var elNewMovie = movieTemplate.cloneNode(true);
+  $_('.movie', elNewMovie).dataset.imdbId = movie.imdbId;
   $_(".movie-id" , elNewMovie).textContent = movie.id;
   $_(".movie-title" , elNewMovie).textContent = movie.title;
   $_(".movie-title" , elNewMovie).title = movie.title;
   $_(".movie-year" , elNewMovie).textContent = movie.year;
-  $_(".movie-tlink" , elNewMovie).href = movie.youtubeId;
   $_(".movie-imdb-id" , elNewMovie).textContent = movie.imdbId;
   $_(".movie-imdb-rating" , elNewMovie).textContent = movie.imdbRating;
-  $_(".movie-description" , elNewMovie).textContent = `Brief description : ${movie.summary}`;
   $_(".movie-runtime" , elNewMovie).textContent = movie.runtime + " min";
-  $_(".movie-language" , elNewMovie).textContent = movie.language;
   $_(".movie-genre" , elNewMovie).textContent = movie.categories.join(" , ");
   $_(".movie-genre" , elNewMovie).title = movie.categories.join(" , ");
   return elNewMovie;
@@ -75,7 +73,7 @@ var searchForm =  $_(".js-search-form");
 var elSearchInput =  $_(".js-search-input" , searchForm);
 var elMinimumRating = $_(".js-rating-input" , searchForm);
 
-categoriesArray = ["All"];
+categoriesArray = [];
 var elSelectCategorie = $_(".js-categorie-select" , searchForm);
 normalizeMovies.forEach(function(movie){
   movie.categories.forEach(function(categorie){
@@ -84,7 +82,7 @@ normalizeMovies.forEach(function(movie){
     };
   });
 });
-
+categoriesArray.sort();
 categoriesArray.forEach(function(categorie){
   var elNewOption = createElement("option" , "" , categorie);
   elNewOption.value = categorie ;
@@ -126,11 +124,8 @@ searchForm.addEventListener('submit' , function(evt){
   };
   removeNull(searchInputValue);
   
-  
   searchInputValue = searchInputValue.join("|").toString();
   var searchQuery = new RegExp(searchInputValue , "gi");
-  
-  
   
   searchResult = normalizeMovies.filter(function(movie){
     var checkTitle = movie.title.toString().match(searchQuery);
@@ -161,14 +156,6 @@ var sortArray = [
   {
     name:"none",
     sort:"all"
-  },
-  {
-    name:"IMdB ID lower",
-    sort:"IMdBIDl"
-  },
-  {
-    name:"IMdB ID higher",
-    sort:"IMdBIDh"
   },
   {
     name:"IMdB rating higher",
@@ -236,20 +223,27 @@ elMoviesSortForm.addEventListener('change', function(evt){
       return a.imdbRating - b.imdbRating ;
     });
   }
-  else if(elMoviesSortSelect.value === "IMdBIDl"){
-    arrayForSort.sort(function(a , b){
-      return ('' + a.imdbId).localeCompare(b.imdbId);
-    });
-  }
-  else if(elMoviesSortSelect.value === "IMdBIDh"){
-    arrayForSort.sort(function(b , a){
-      return ('' + a.imdbId).localeCompare(b.imdbId);
-    });
-  }
   else if(elMoviesSortSelect.value === "all"){
     arrayForSort.sort(function(a , b){
       return a.id - b.id;
     });
   }
   renderMovies(arrayForSort);
+});
+
+moviesList.addEventListener("click",(evt)=>{
+  if(evt.target.matches(".js-open-modal-btn")){
+    var elParentli = evt.target.closest(".movie");
+    var moreInfo = normalizeMovies.find(function(movie){
+      return movie.imdbId === elParentli.dataset.imdbId;
+    });
+    
+    var setModalValues = function(array){
+      $_("#movie-title").textContent = array.title ;
+      $_(".movie-description").textContent = `Brief description : ${array.summary}`;
+      $_(".movie-language").textContent = array.language ;
+      $_(".movie-tlink").href = array.youtubeId;
+    };
+    setModalValues(moreInfo);
+  };
 });
