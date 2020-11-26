@@ -15,6 +15,7 @@ var createMovieElement = function(movie){
   $_(".movie-runtime" , elNewMovie).textContent = movie.runtime + " min";
   $_(".movie-genre" , elNewMovie).textContent = movie.categories.join(" , ");
   $_(".movie-genre" , elNewMovie).title = movie.categories.join(" , ");
+  $_(".js-bookmark-btn" , elNewMovie).dataset.imdbId = movie.imdbId ;
   return elNewMovie;
 };
 
@@ -231,19 +232,69 @@ elMoviesSortForm.addEventListener('change', function(evt){
   renderMovies(arrayForSort);
 });
 
+var setModalValues = function(array){
+  $_("#movie-title").textContent = array.title ;
+  $_(".movie-description").textContent = `Brief description : ${array.summary}`;
+  $_(".movie-language").textContent = array.language ;
+  $_(".movie-tlink").href = array.youtubeId;
+};
+
+var bookmarkMovies = $_(".js-bookmark-movies");
+var bookmarkedMoviesArray = [];
+var bookmarkTemplate = $_("#bookmark-element").content ;
+
+var renderBookmarkedMovies = () =>{
+  bookmarkMovies.innerHTML = "";
+  
+  var bookmarkedMoviesFragment = document.createDocumentFragment() ;
+  
+  bookmarkedMoviesArray.forEach((movie)=>{
+    var elBookmarkedMovie = bookmarkTemplate.cloneNode(true);
+    
+    $_(".js-bookmark-element" ,elBookmarkedMovie).textContent = movie.title ;
+    $_(".js-bookmark-element" ,elBookmarkedMovie).title = movie.title ;
+    $_(".btn-delete-bookmark" ,elBookmarkedMovie).dataset.imdbId = movie.imdbId ;
+    
+    
+    bookmarkedMoviesFragment.appendChild(elBookmarkedMovie);
+  });
+  
+  bookmarkMovies.appendChild(bookmarkedMoviesFragment);
+};
+
+var addBookmarkMovies = (movie)=>{
+  if (bookmarkedMoviesArray.includes(movie)){
+    return ;
+  };
+  bookmarkedMoviesArray.push(movie);
+  
+  renderBookmarkedMovies();
+};
+
 moviesList.addEventListener("click",(evt)=>{
   if(evt.target.matches(".js-open-modal-btn")){
     var elParentli = evt.target.closest(".movie");
     var moreInfo = normalizeMovies.find(function(movie){
       return movie.imdbId === elParentli.dataset.imdbId;
     });
-    
-    var setModalValues = function(array){
-      $_("#movie-title").textContent = array.title ;
-      $_(".movie-description").textContent = `Brief description : ${array.summary}`;
-      $_(".movie-language").textContent = array.language ;
-      $_(".movie-tlink").href = array.youtubeId;
-    };
     setModalValues(moreInfo);
-  };
+  } else if(evt.target.matches(".js-bookmark-btn")){
+    var movieImdbId = evt.target.dataset.imdbId;
+    let foundMovie = normalizeMovies.find(movie => movie.imdbId === movieImdbId);
+    
+    addBookmarkMovies(foundMovie);
+  }
 });
+
+bookmarkMovies.addEventListener("click" , (evt)=>{
+  if(evt.target.matches(".btn-delete-bookmark")){
+    var btnImdbId = evt.target.dataset.imdbId ;
+    var findBookmarkMovie = bookmarkedMoviesArray.find((movie)=>{
+      return movie.imdbId === btnImdbId;
+    });
+    var indexBookmark = bookmarkedMoviesArray.indexOf(findBookmarkMovie);
+    
+    bookmarkedMoviesArray.splice(indexBookmark , 1);
+    renderBookmarkedMovies();
+  };
+})
