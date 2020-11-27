@@ -248,13 +248,12 @@ var renderBookmarkedMovies = () =>{
   
   var bookmarkedMoviesFragment = document.createDocumentFragment() ;
   
-  bookmarkedMoviesArray.forEach((movie)=>{
+  bookmarkedMoviesStorage.forEach((movie)=>{
     var elBookmarkedMovie = bookmarkTemplate.cloneNode(true);
     
     $_(".js-bookmark-element" ,elBookmarkedMovie).textContent = movie.title ;
     $_(".js-bookmark-element" ,elBookmarkedMovie).title = movie.title ;
     $_(".btn-delete-bookmark" ,elBookmarkedMovie).dataset.imdbId = movie.imdbId ;
-    
     
     bookmarkedMoviesFragment.appendChild(elBookmarkedMovie);
   });
@@ -262,13 +261,29 @@ var renderBookmarkedMovies = () =>{
   bookmarkMovies.appendChild(bookmarkedMoviesFragment);
 };
 
-var addBookmarkMovies = (movie)=>{
-  if (bookmarkedMoviesArray.includes(movie)){
-    return ;
-  };
-  bookmarkedMoviesArray.push(movie);
-  
+var localRepeat = function(){
+  var menu = JSON.stringify(bookmarkedMoviesStorage);
+  localStorage.setItem("bookmarkedMoviesStorage" , menu);
+};
+
+if (!localStorage.getItem("bookmarkedMoviesStorage")){
+  var bookmarkedMoviesStorage = [];
+  localRepeat();
+}else{
+  var bookmarkedMoviesStorage = JSON.parse(localStorage.getItem("bookmarkedMoviesStorage"));
   renderBookmarkedMovies();
+}
+
+
+var checkAndAddBookmarkeds = (movie)=>{
+  var isBookmarked = bookmarkedMoviesStorage.find(function(bookmark){
+    return bookmark.imdbId === movie.imdbId ;
+  });
+  
+  if(!isBookmarked){
+    bookmarkedMoviesStorage.push(movie);
+    renderBookmarkedMovies();
+  }
 };
 
 moviesList.addEventListener("click",(evt)=>{
@@ -282,19 +297,22 @@ moviesList.addEventListener("click",(evt)=>{
     var movieImdbId = evt.target.dataset.imdbId;
     let foundMovie = normalizeMovies.find(movie => movie.imdbId === movieImdbId);
     
-    addBookmarkMovies(foundMovie);
+    localStorage.removeItem("bookmarkedMoviesStorage");
+    checkAndAddBookmarkeds(foundMovie);
+    localRepeat();
   }
 });
 
 bookmarkMovies.addEventListener("click" , (evt)=>{
   if(evt.target.matches(".btn-delete-bookmark")){
     var btnImdbId = evt.target.dataset.imdbId ;
-    var findBookmarkMovie = bookmarkedMoviesArray.find((movie)=>{
+    var findBookmarkMovie = bookmarkedMoviesStorage.find((movie)=>{
       return movie.imdbId === btnImdbId;
     });
-    var indexBookmark = bookmarkedMoviesArray.indexOf(findBookmarkMovie);
+    var indexBookmark = bookmarkedMoviesStorage.indexOf(findBookmarkMovie);
     
-    bookmarkedMoviesArray.splice(indexBookmark , 1);
+    bookmarkedMoviesStorage.splice(indexBookmark , 1);
+    localRepeat();
     renderBookmarkedMovies();
   };
 })
