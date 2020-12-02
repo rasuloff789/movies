@@ -52,23 +52,7 @@ var renderMovies = function (movies) {
 };
 renderMovies(twoHundredMovies);
 
-var btnShowMovies  = $_(".js-btn-show-movies");
-btnShowMovies.addEventListener("click" , function(){
-  renderMovies(normalizeMovies);
-  arrayForSort = normalizeMovies.slice();
-  btnShowMovies.classList.add("d-none");
-  btnShowMovies.classList.remove("d-block");
-});
 
-var btnReloadMovies = $_(".js-btn-reload-movies");
-btnReloadMovies.addEventListener("click" , function(){
-  renderMovies(twoHundredMovies);
-  arrayForSort = twoHundredMovies.slice();
-  btnReloadMovies.classList.add("d-none");
-  btnReloadMovies.classList.remove("d-block");
-  btnShowMovies.classList.add("d-block");
-  btnShowMovies.classList.remove("d-none");
-});
 
 var searchForm =  $_(".js-search-form");
 var elSearchInput =  $_(".js-search-input" , searchForm);
@@ -141,16 +125,10 @@ searchForm.addEventListener('submit' , function(evt){
     arrayForSort = twoHundredMovies.slice();
     elSearchInput.value = "";
     elSearchInput.focus();
-    btnShowMovies.classList.add("d-block");
-    btnShowMovies.classList.remove("d-none");
   }else{
-    renderMovies(searchResult);
     arrayForSort = searchResult.slice();
-    btnShowMovies.classList.add("d-none");
-    btnShowMovies.classList.remove("d-block");
-    btnReloadMovies.classList.remove("d-none");
-    btnReloadMovies.classList.add("d-block");
   };
+  countPagination(arrayForSort);
 });
 
 var sortArray = [
@@ -229,7 +207,7 @@ elMoviesSortForm.addEventListener('change', function(evt){
       return a.id - b.id;
     });
   }
-  renderMovies(arrayForSort);
+  countPagination(arrayForSort);
 });
 
 var setModalValues = function(array){
@@ -315,4 +293,55 @@ bookmarkMovies.addEventListener("click" , (evt)=>{
     localRepeat();
     renderBookmarkedMovies();
   };
-})
+});
+
+var indexClick = 0;
+var pageLength = 10;
+var paginationNumber = 10;
+var paginationList = $_(".js-pagination");
+var itemTemplate = $_("#pagination-template").content ;
+
+var countPagination = function(i){
+  var paginationLengCount =   Math.ceil(i.length / pageLength);
+  renderPagination(paginationLengCount);
+  var paginationSlice = i.slice(0 , pageLength);
+  renderMovies(paginationSlice)
+}
+
+var renderPagination = function(value){
+  
+  if(value < 2){
+    return;
+  };
+  
+  paginationList.innerHTML = "" ;
+  
+  var fragmentForItems = document.createDocumentFragment();
+  
+  for(var i = 1; i <= value; i++){
+    var cloneTemplate = itemTemplate.cloneNode(true);
+    
+    $_(".page-link" , cloneTemplate).textContent = i ;
+    $_(".page-link" , cloneTemplate).dataset.id = i;
+    
+    fragmentForItems.append(cloneTemplate);
+  };
+  
+  $$_(".page-item" , fragmentForItems)[0].classList.add("active");
+  
+  paginationList.append(fragmentForItems);
+  
+};
+
+paginationList.addEventListener('click', (evt)=>{
+  if(evt.target.matches("a")){
+    evt.preventDefault();
+    $$_(".pagination-item").forEach((item)=>{
+      item.classList.remove("active");
+    });
+    evt.target.closest(".pagination-item").classList.add("active");
+    var targetValue = Number(evt.target.dataset.id) - 1;
+    var slice = arrayForSort.slice(targetValue * pageLength  , targetValue * pageLength + pageLength);
+    countPagination(slice);
+  }
+});
