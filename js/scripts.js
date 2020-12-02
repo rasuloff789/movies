@@ -50,7 +50,6 @@ var renderMovies = function (movies) {
   
   moviesList.appendChild(elMovieWrapperFragment);
 };
-renderMovies(twoHundredMovies);
 
 
 
@@ -345,3 +344,5 @@ paginationList.addEventListener('click', (evt)=>{
     countPagination(slice);
   }
 });
+
+countPagination(twoHundredMovies);
